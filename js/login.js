@@ -54,9 +54,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (window.showNotification) showNotification('Đang xác thực...', 'info');
         // http://127.0.0.1:8000/api/
-        // https://api-music-weather.onrender.com/api/
+        // https://apimusicweather.onrender.com
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/login', {
+            const response = await fetch('https://apimusicweather.onrender.com/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/users/forgotpassword', {
+            const response = await fetch('https://apimusicweather.onrender.com/api/users/forgotpassword', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

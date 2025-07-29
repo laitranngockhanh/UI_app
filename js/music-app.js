@@ -174,7 +174,7 @@ let nextSongIndex = -1;
 
 
 // Cấu hình API
-const API_BASE_URL = 'http://127.0.0.1:8000/api';
+const API_BASE_URL = 'https://apimusicweather.onrender.com';
 let songs = [];
 let albums = [];
 
