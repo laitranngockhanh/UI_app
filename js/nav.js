@@ -121,10 +121,21 @@ function renderSidebar() {
     const currentPage = (window.location.pathname.split('/').pop() || 'index.html').replace('.html', '');
     const isOffline = !navigator.onLine;
 
+    const pageTitles = {
+        'index': 'Home',
+        'user': 'User Profile',
+        'weather': 'Weather',
+        'musicplayer': 'Music Player',
+        'contact': 'Contact',
+        'login': 'Login',
+        'register': 'Register'
+    };
+    const displayTitle = pageTitles[currentPage] || 'MUSIC';
+
     const sidebarHTML = `
         <section class="sidebar ${isOffline ? 'offline' : ''}">
             <div class="nav-header">
-                <p class="logo">MUSIC</p>
+                <p class="logo">${displayTitle.toUpperCase()}</p>
                 <i class="bx bx-menu-alt-right btn-menu"></i>
             </div>
             <ul class="nav-links">

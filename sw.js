@@ -2,7 +2,7 @@ const CACHE_NAME = 'music-app-cache-v1';
 const STATIC_ASSETS = [
   '/html/index.html',
   '/html/contact.html',
-  '/html/Login.html',
+  '/html/login.html',
   '/html/musicplayer.html',
   '/html/user.html',
   '/html/weather.html',
@@ -22,6 +22,7 @@ const STATIC_ASSETS = [
   '/css/pagetrans.css',
   '/css/user.css',
   '/css/weather.css',
+  '/css/img-home.css',
   '/js/nav.js',
   '/js/pagetrans.js',
   '/js/register.js',
@@ -48,7 +49,10 @@ const STATIC_ASSETS = [
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
+      // Dùng return cache.addAll() để đợi cache xong
       return cache.addAll(STATIC_ASSETS);
+    }).catch(err => {
+      console.error('Service Worker cache.addAll failed:', err);
     })
   );
   self.skipWaiting();
@@ -72,10 +76,14 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
+  // Skip API calls from standard caching - handle them separately
   if (url.pathname.startsWith('/api')) {
     event.respondWith(
       fetch(event.request).catch(() => {
-        return new Response('Offline: API unavailable', { status: 503 });
+        return new Response(JSON.stringify({ error: 'Offline: API unavailable' }), { 
+            status: 503, 
+            headers: { 'Content-Type': 'application/json' } 
+        });
       })
     );
     return;
@@ -84,12 +92,21 @@ self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request).then(response => {
       return response || fetch(event.request).then(fetchResponse => {
-        return caches.open(CACHE_NAME).then(cache => {
-          cache.put(event.request, fetchResponse.clone());
+        // Cache new requests that were not in STATIC_ASSETS
+        if (!fetchResponse || fetchResponse.status !== 200 || fetchResponse.type !== 'basic') {
           return fetchResponse;
+        }
+        const responseToCache = fetchResponse.clone();
+        caches.open(CACHE_NAME).then(cache => {
+          cache.put(event.request, responseToCache);
         });
+        return fetchResponse;
       }).catch(() => {
-        return caches.match('/html/index.html');
+        // Fallback to index if navigating to an HTML page
+        if (event.request.mode === 'navigate') {
+          return caches.match('/html/index.html');
+        }
+        return new Response('Offline: Network error', { status: 404 });
       });
     })
   );
