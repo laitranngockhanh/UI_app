@@ -123,12 +123,10 @@ function renderSidebar() {
 
     const pageTitles = {
         'index': 'Home',
-        'user': 'User Profile',
+        'user': 'Profile',
         'weather': 'Weather',
-        'musicplayer': 'Music Player',
+        'musicplayer': 'Music',
         'contact': 'Contact',
-        'login': 'Login',
-        'register': 'Register'
     };
     const displayTitle = pageTitles[currentPage] || 'MUSIC';
 
