@@ -40,6 +40,15 @@ document.addEventListener('DOMContentLoaded', function () {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
+    function removeDiacritics(str) {
+        if (!str) return '';
+        return str
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/đ/g, 'd')
+            .replace(/Đ/g, 'D');
+    }
+
     function getDateMonth(date) {
         const day = date.getDate();
         const month = date.getMonth() + 1;
@@ -98,10 +107,8 @@ document.addEventListener('DOMContentLoaded', function () {
         today.setHours(0, 0, 0, 0);
         const todayTimestamp = today.getTime() / 1000;
 
-        // Tạo một object để lưu dữ liệu theo ngày
         const forecastByDay = {};
 
-        // Nhóm dữ liệu theo ngày
         data.list.forEach(item => {
             const itemDate = new Date(item.dt * 1000);
             const itemDayTimestamp = itemDate.setHours(0, 0, 0, 0) / 1000;
@@ -118,7 +125,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     count: 1
                 };
             } else {
-                // Cập nhật xác suất mưa cao nhất
+                // Cập n
                 forecastByDay[dayKey].pop = Math.max(forecastByDay[dayKey].pop, item.pop);
                 forecastByDay[dayKey].count += 1;
                 // Ưu tiên dữ liệu lúc 12h trưa
@@ -175,8 +182,9 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        const currentUrl = `https://api.openweathermap.org/data/2.5/weather?q=${locationSearch}&appid=${ApiKey1}&units=metric&lang=vi`;
-        const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${locationSearch}&appid=${ApiKey2}&units=metric&lang=vi`;
+        const searchQuery = encodeURIComponent(locationSearch.trim());
+        const currentUrl = `https://api.openweathermap.org/data/2.5/weather?q=${searchQuery}&appid=${ApiKey1}&units=metric&lang=vi`;
+        const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${searchQuery}&appid=${ApiKey2}&units=metric&lang=vi`;
 
         try {
             apiCallCounter += 2;

@@ -653,13 +653,19 @@ function getPrevSongIndex(currentIndex) {
 
     if (isLoopSingle) return currentIndex;
 
-    if (isRandom && playHistory.length > 1) {
-        playHistory.pop();
-        const prevIndex = playHistory[playHistory.length - 1] || 0;
-        if (playedIndices.includes(currentIndex)) {
-            playedIndices = playedIndices.filter(i => i !== currentIndex);
+    if (isRandom) {
+        if (playHistory.length > 1) {
+            playHistory.pop();
+            const prevIndex = playHistory[playHistory.length - 1];
+            if (prevIndex !== undefined && prevIndex >= 0) {
+                if (playedIndices.includes(currentIndex)) {
+                    playedIndices = playedIndices.filter(i => i !== currentIndex);
+                }
+                return prevIndex;
+            }
         }
-        return prevIndex;
+        // Không có lịch sử → giữ nguyên bài hiện tại
+        return currentIndex;
     }
 
     if (currentIndex > 0) return currentIndex - 1;
@@ -1200,8 +1206,23 @@ function resetAudioState() {
 
 function updateVolume(volume) {
     if (isNaN(volume) || volume < 0 || volume > 1) return;
-    audio.volume = volume;
+    
+    // Sử dụng đường cong mũ 3 để âm lượng giống YouTube và các trình phát chuyên nghiệp nhất
+    audio.volume = Math.pow(volume, 3);
     const volumePercent = volume * 100;
+
+    // Cập nhật icon loa theo mức âm lượng
+    const volumeIcon = document.querySelector('.music-control__right i');
+    if (volumeIcon) {
+        volumeIcon.className = 'fa-solid';
+        if (volume === 0) {
+            volumeIcon.classList.add('fa-volume-mute');
+        } else if (volume < 0.5) {
+            volumeIcon.classList.add('fa-volume-low');
+        } else {
+            volumeIcon.classList.add('fa-volume-high');
+        }
+    }
 
     if (slider) {
         slider.value = volume;
@@ -1336,43 +1357,45 @@ function setupEvents() {
         }
     });
 
-    if (prevBtn) {
-        prevBtn.addEventListener('click', () => {
-            const songListSource = currentAlbumId ? currentAlbumPlaylist : songs;
-            if (!songListSource || songListSource.length === 0) {
-                showNotification('Danh sách bài hát rỗng.', 'info');
-                return;
-            }
+    const debouncedPrev = debounce(() => {
+        const songListSource = currentAlbumId ? currentAlbumPlaylist : songs;
+        if (!songListSource || songListSource.length === 0) {
+            showNotification('Danh sách bài hát rỗng.', 'info');
+            return;
+        }
+        if (isLoadingSong) return;
 
-            const prevIndex = getPrevSongIndex(currentSongIndex);
-            if (prevIndex >= 0 && prevIndex < songListSource.length) {
-                appendSong(prevIndex, true).catch(err => {
-                    showNotification('Không thể phát bài hát trước đó: ' + err.message, 'error');
-                });
-            } else {
-                showNotification('Không có bài hát trước đó.', 'error');
-            }
-        });
-    }
+        const prevIndex = getPrevSongIndex(currentSongIndex);
+        if (prevIndex >= 0 && prevIndex < songListSource.length) {
+            appendSong(prevIndex, isPlaying).catch(err => {
+                showNotification('Không thể phát bài hát trước đó: ' + err.message, 'error');
+            });
+        } else {
+            showNotification('Đang ở bài đầu tiên.', 'info');
+        }
+    }, 300);
 
-    if (nextBtn) {
-        nextBtn.addEventListener('click', () => {
-            const songListSource = currentAlbumId ? currentAlbumPlaylist : songs;
-            if (!songListSource || songListSource.length === 0) {
-                showNotification('Danh sách bài hát rỗng.', 'info');
-                return;
-            }
+    if (prevBtn) prevBtn.addEventListener('click', debouncedPrev);
 
-            const nextIndex = getNextSongIndex(currentSongIndex);
-            if (nextIndex >= 0 && nextIndex < songListSource.length) {
-                appendSong(nextIndex, true).catch(err => {
-                    showNotification('Không thể phát bài hát tiếp theo: ' + err.message, 'error');
-                });
-            } else {
-                showNotification('Không có bài hát tiếp theo.', 'error');
-            }
-        });
-    }
+    const debouncedNext = debounce(() => {
+        const songListSource = currentAlbumId ? currentAlbumPlaylist : songs;
+        if (!songListSource || songListSource.length === 0) {
+            showNotification('Danh sách bài hát rỗng.', 'info');
+            return;
+        }
+        if (isLoadingSong) return;
+
+        const nextIndex = getNextSongIndex(currentSongIndex);
+        if (nextIndex >= 0 && nextIndex < songListSource.length) {
+            appendSong(nextIndex, isPlaying).catch(err => {
+                showNotification('Không thể phát bài hát tiếp theo: ' + err.message, 'error');
+            });
+        } else {
+            showNotification('Đã phát hết danh sách.', 'info');
+        }
+    }, 300);
+
+    if (nextBtn) nextBtn.addEventListener('click', debouncedNext);
 
     if (slider) {
         slider.addEventListener('input', (e) => {
@@ -1510,6 +1533,13 @@ function setupEvents() {
 
             if (!file.type.startsWith('audio/')) {
                 showNotification('Vui lòng chọn tệp âm thanh (mp3, mpeg, v.v.)!', 'info');
+                return;
+            }
+
+            // Kiểm tra kích thước file (giới hạn 50MB)
+            const MAX_FILE_SIZE_MB = 50;
+            if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+                showNotification(`File quá lớn! Tối đa ${MAX_FILE_SIZE_MB}MB. File của bạn: ${(file.size / 1024 / 1024).toFixed(1)}MB`, 'error');
                 return;
             }
 

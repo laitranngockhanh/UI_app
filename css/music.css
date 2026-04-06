@@ -104,7 +104,7 @@ body {
     position: absolute;
     height: 0;
     width: 10px;
-    border-top: 18px solid lightseagreen;
+    border-top: 18px solid #0cb6a7;
     border-left: 2px solid transparent;
     border-right: 2px solid transparent;
     top: 108px;
@@ -649,7 +649,7 @@ body {
     display: block;
     width: 100%;
     padding: 10px;
-    background-color: #0751f2;
+    background-color: #e59e2c;
     border: none;
     border-radius: 10px;
     color: #fff;
@@ -660,7 +660,7 @@ body {
 }
 
 .create-album-btn:hover {
-    background-color: #3a3fc3;
+    background-color: #d07724;
 }
 
 .album-list {
