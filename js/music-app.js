@@ -2024,14 +2024,23 @@ function updateAlbumItemEvents() {
             if (!albumId) return;
 
             if (e.target === albumTitle || albumTitle.contains(e.target)) {
-                await loadAlbumSongs(albumId);
                 setPopup('playlist');
+                if (playlistTitle) playlistTitle.textContent = 'Đang tải...';
+                const songList = document.querySelector('.song-list');
+                if (songList) songList.innerHTML = '<p class="no-songs-message" style="display:block; color:#fff;">Đang đồng bộ dữ liệu...</p>';
+                
+                await loadAlbumSongs(albumId);
+                
                 if (currentAlbumPlaylist.length > 0) {
                     await appendSong(0, true);
                 }
             } else if (e.target !== optionsBtn && !e.target.closest('.options-popup') && !e.target.closest('.remove-song-btn')) {
-                await loadAlbumSongs(albumId);
                 setPopup('playlist');
+                if (playlistTitle) playlistTitle.textContent = 'Đang tải...';
+                const songList = document.querySelector('.song-list');
+                if (songList) songList.innerHTML = '<p class="no-songs-message" style="display:block; color:#fff;">Đang đồng bộ dữ liệu...</p>';
+                
+                await loadAlbumSongs(albumId);
             }
         });
 
