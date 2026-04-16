@@ -685,6 +685,10 @@ function updateSongList() {
     const disableActions = (!isOnline || !isLoggedIn);
     const songListSource = currentAlbumId ? currentAlbumPlaylist : songs;
     const noSongsMessage = songList.querySelector('.no-songs-message');
+    
+    // Lấy song_id của bài hát hiện tại để so sánh chính xác
+    const currentSong = currentAlbumId ? currentAlbumPlaylist[currentSongIndex] : songs[currentSongIndex];
+    const currentSongId = currentSong ? currentSong.song_id : null;
 
 
     songList.querySelectorAll('.song-item').forEach(item => item.remove());
@@ -705,7 +709,7 @@ function updateSongList() {
             clone.querySelector('.artist').textContent = song.custom_artist || 'Không xác định';
             clone.querySelector('.option-item[data-action="delete"]').textContent = currentAlbumId ? 'Xóa khỏi Album' : 'Xóa';
 
-            if (index === currentSongIndex) {
+            if (currentSongId && String(song.song_id) === String(currentSongId)) {
                 songItem.classList.add('playing');
             } else {
                 songItem.classList.remove('playing');
@@ -757,6 +761,10 @@ function displayAlbumsList() {
         const albumTemplate = document.getElementById('album-item-template').content;
         const songTemplate = document.getElementById('album-song-item-template').content;
 
+        // Lấy song_id của bài hát hiện tại để highlight
+        const currentSong = currentAlbumId ? currentAlbumPlaylist[currentSongIndex] : songs[currentSongIndex];
+        const currentSongId = currentSong ? currentSong.song_id : null;
+
         albums.forEach(album => {
             const albumClone = document.importNode(albumTemplate, true);
             const albumItem = albumClone.querySelector('.album-item');
@@ -772,7 +780,7 @@ function displayAlbumsList() {
 
             const albumSongs = albumClone.querySelector('.album-songs');
             const noAlbumSongsMessage = albumSongs.querySelector('.no-album-songs-message');
-            const songsToDisplay = (album.songs || []).filter(song => isOnline || (songs.find(s => s.song_id === song.song_id)?.localPath));
+            const songsToDisplay = (album.songs || []).filter(song => isOnline || (songs.find(s => String(s.song_id) === String(song.song_id))?.localPath));
 
             if (songsToDisplay.length > 0) {
                 noAlbumSongsMessage.style.display = 'none';
@@ -783,7 +791,7 @@ function displayAlbumsList() {
                     songClone.querySelector('.remove-song-btn').dataset.song = song.song_id;
                     songClone.querySelector('.remove-song-btn').dataset.album = album.id;
 
-                    if (!isOnline && !songs.find(s => s.song_id === song.song_id)?.localPath) {
+                    if (!isOnline && !songs.find(s => String(s.song_id) === String(song.song_id))?.localPath) {
                         songClone.querySelector('.album-song-item').classList.add('disabled');
                         songClone.querySelector('.album-song-item').title = 'Bài hát không khả dụng ngoại tuyến';
                         songClone.querySelector('.remove-song-btn').disabled = true;
@@ -791,13 +799,10 @@ function displayAlbumsList() {
 
                     albumSongs.appendChild(songClone);
 
-                    // Thêm class 'playing' nếu bài hát này đang được nạp trong player (kể cả khi pause)
+                    // Thêm class 'playing' nếu bài hát này đang được nạp trong player
                     const songItem = albumSongs.lastElementChild;
-                    if (currentAlbumId && parseInt(currentAlbumId) === album.id) {
-                        const currentAlbumSong = currentAlbumPlaylist[currentSongIndex];
-                        if (currentAlbumSong && currentAlbumSong.song_id === song.song_id) {
-                            songItem.classList.add('playing');
-                        }
+                    if (currentSongId && String(song.song_id) === String(currentSongId)) {
+                        songItem.classList.add('playing');
                     }
                 });
             } else {
@@ -837,7 +842,7 @@ async function setPopup(popup) {
         if (playlistTitle) {
             if (currentAlbumId) {
                 const album = albums.find(a => a.id === parseInt(currentAlbumId));
-                playlistTitle.textContent = album ? `Danh sách của ${album.album_name}` : 'Danh sách phát';
+                playlistTitle.textContent = album ? `${album.album_name}` : 'Danh sách phát';
             } else {
                 playlistTitle.textContent = 'Danh sách phát';
             }

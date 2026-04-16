@@ -253,7 +253,8 @@ body {
 }
 
 .song-item.playing {
-    background-color: #f6131357 !important;
+    background-color: rgba(246, 19, 19, 0.8) !important;
+    border: 2px solid #ff0000 !important;
 }
 
 .song-info .title {
@@ -729,7 +730,8 @@ body {
 }
 
 .album-song-item.playing {
-    background-color: #f6131357 !important;
+    background-color: rgba(246, 19, 19, 0.8) !important;
+    border: 1px solid #ff0000 !important;
 }
 
 .album-song-item .song-info {
