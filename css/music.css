@@ -252,6 +252,10 @@ body {
     background-color: #f26d07;
 }
 
+.song-item.playing {
+    background-color: #f6131357 !important;
+}
+
 .song-info .title {
     font-size: 13px;
     font-weight: bold;
@@ -722,6 +726,10 @@ body {
 
 .album-song-item:hover {
     background-color: #00ccff;
+}
+
+.album-song-item.playing {
+    background-color: #f6131357 !important;
 }
 
 .album-song-item .song-info {

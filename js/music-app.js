@@ -705,7 +705,7 @@ function updateSongList() {
             clone.querySelector('.artist').textContent = song.custom_artist || 'Không xác định';
             clone.querySelector('.option-item[data-action="delete"]').textContent = currentAlbumId ? 'Xóa khỏi Album' : 'Xóa';
 
-            if (index === currentSongIndex && isPlaying) {
+            if (index === currentSongIndex) {
                 songItem.classList.add('playing');
             } else {
                 songItem.classList.remove('playing');
@@ -725,6 +725,12 @@ function updateSongList() {
         });
     }
     updateSongItemEvents();
+    
+    // Tự động cuộn đến bài hát đang phát
+    const activeItem = songList.querySelector('.song-item.playing');
+    if (activeItem) {
+        activeItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
 }
 
 function displayAlbumsList() {
@@ -784,6 +790,15 @@ function displayAlbumsList() {
                     }
 
                     albumSongs.appendChild(songClone);
+
+                    // Thêm class 'playing' nếu bài hát này đang được nạp trong player (kể cả khi pause)
+                    const songItem = albumSongs.lastElementChild;
+                    if (currentAlbumId && parseInt(currentAlbumId) === album.id) {
+                        const currentAlbumSong = currentAlbumPlaylist[currentSongIndex];
+                        if (currentAlbumSong && currentAlbumSong.song_id === song.song_id) {
+                            songItem.classList.add('playing');
+                        }
+                    }
                 });
             } else {
                 noAlbumSongsMessage.style.display = 'block';
@@ -794,6 +809,12 @@ function displayAlbumsList() {
         });
     }
     updateAlbumItemEvents();
+
+    // Tự động cuộn đến bài hát đang phát trong Album
+    const activeAlbumItem = albumList.querySelector('.album-song-item.playing');
+    if (activeAlbumItem) {
+        activeAlbumItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
 }
 
 async function setPopup(popup) {
