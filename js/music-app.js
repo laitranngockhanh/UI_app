@@ -171,6 +171,7 @@ let activePopups = [];
 let activeAlbumInputPopup = null;
 let preloadAudio = null;
 let nextSongIndex = -1;
+let playingSongId = null; // ID của bài hát thực sự đang được phát 
 
 
 // Cấu hình API
@@ -686,9 +687,8 @@ function updateSongList() {
     const songListSource = currentAlbumId ? currentAlbumPlaylist : songs;
     const noSongsMessage = songList.querySelector('.no-songs-message');
     
-    // Lấy song_id của bài hát hiện tại để so sánh chính xác
-    const currentSong = currentAlbumId ? currentAlbumPlaylist[currentSongIndex] : songs[currentSongIndex];
-    const currentSongId = currentSong ? currentSong.song_id : null;
+    // Sử dụng playingSongId đã được lưu lại khi phát bài hát
+    const currentSongId = playingSongId;
 
 
     songList.querySelectorAll('.song-item').forEach(item => item.remove());
@@ -761,9 +761,8 @@ function displayAlbumsList() {
         const albumTemplate = document.getElementById('album-item-template').content;
         const songTemplate = document.getElementById('album-song-item-template').content;
 
-        // Lấy song_id của bài hát hiện tại để highlight
-        const currentSong = currentAlbumId ? currentAlbumPlaylist[currentSongIndex] : songs[currentSongIndex];
-        const currentSongId = currentSong ? currentSong.song_id : null;
+        // Sử dụng playingSongId đã được lưu lại khi phát bài hát
+        const currentSongId = playingSongId;
 
         albums.forEach(album => {
             const albumClone = document.importNode(albumTemplate, true);
@@ -1125,6 +1124,7 @@ async function appendSong(index, autoPlay = false) {
 
         songTitle.textContent = song.custom_name || 'Không xác định';
         songArtist.textContent = song.custom_artist || 'Không xác định';
+        playingSongId = song.song_id; // Cập nhật ID bài hát đang phát thực sự
 
         if ('mediaSession' in navigator) {
             const isOnline = navigator.onLine;
@@ -1208,6 +1208,7 @@ function resetAudioState() {
     audio.src = '';
     songTitle.textContent = '';
     songArtist.textContent = '';
+    playingSongId = null; 
     if (!isPlaying && !isLoadingSong) currentSongIndex = -1;
     isPlaying = false;
     if (progress) {
