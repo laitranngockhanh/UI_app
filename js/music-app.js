@@ -454,7 +454,7 @@ async function loadAlbumSongs(albumId) {
         // Cập nhật tiêu đề playlist
         if (playlistTitle) {
             const album = albums.find(a => a.id === parseInt(albumId));
-            playlistTitle.textContent = album ? `Danh sách của ${album.album_name}` : 'Danh sách phát';
+            playlistTitle.textContent = album ? `${album.album_name}` : 'Danh sách phát';
         }
     } catch (error) {
         currentAlbumId = null;
