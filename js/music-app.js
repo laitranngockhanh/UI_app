@@ -879,19 +879,30 @@ function showAlbumInputPopup(title, defaultValue, onSave) {
 
     saveBtn.addEventListener('click', async (e) => {
         e.stopPropagation();
+        if (saveBtn.disabled) return;
+
         const newTitle = input.value.trim();
         if (!newTitle) {
             showNotification('Vui lòng nhập tên album hợp lệ.', 'info');
             return;
         }
+
+        saveBtn.disabled = true;
+        saveBtn.style.opacity = '0.5';
+        saveBtn.textContent = 'Đang lưu...';
+
         try {
             await onSave(newTitle);
-        } catch (error) {
-            showNotification('Lỗi: ' + error.message, 'error');
-        } finally {
+            // Thành công mới đóng popup
             popup.remove();
             if (overlay) overlay.classList.remove('active');
             activeAlbumInputPopup = null;
+        } catch (error) {
+            // Lỗi thì giữ popup để người dùng sửa, nhưng mở lại button
+            showNotification(error.message, 'error');
+            saveBtn.disabled = false;
+            saveBtn.style.opacity = '1';
+            saveBtn.textContent = 'Lưu';
         }
     });
 
@@ -1529,12 +1540,15 @@ function setupEvents() {
                 return;
             }
             showAlbumInputPopup('Tạo Album', '', async (newTitle) => {
+                if (albums.some(a => a.album_name.toLowerCase() === newTitle.toLowerCase())) {
+                    throw new Error(`Album "${newTitle}" đã tồn tại!`);
+                }
                 try {
                     const newAlbum = await fetchAPI('/albums', 'POST', { album_name: newTitle });
                     albums.push(newAlbum);
                     displayAlbumsList();
                 } catch (error) {
-                    showNotification('Không thể tạo album: ' + error.message, 'error');
+                    throw new Error('Không thể tạo album: ' + error.message);
                 }
             });
         });
@@ -1968,12 +1982,15 @@ function updateAlbumItemEvents() {
                         return;
                     }
                     showAlbumInputPopup('Chỉnh sửa Album', albums.find(a => a.id === parseInt(albumId)).album_name, async (newTitle) => {
+                        if (albums.some(a => a.id !== parseInt(albumId) && a.album_name.toLowerCase() === newTitle.toLowerCase())) {
+                            throw new Error(`Tên album "${newTitle}" đã được sử dụng bởi album khác!`);
+                        }
                         try {
                             await fetchAPI(`/albums/${albumId}`, 'PUT', { album_name: newTitle });
                             await loadAlbums();
                             displayAlbumsList();
                         } catch (error) {
-                            showNotification('Không thể cập nhật album: ' + error.message, 'error');
+                            throw new Error('Không thể cập nhật album: ' + error.message);
                         }
                     });
                 } else if (action === 'delete') {
