@@ -403,13 +403,14 @@ function updateVolume(volume) {
     if (isNaN(volume) || volume < 0 || volume > 1) return;
 
     
-    // Sử dụng đường cong lũy thừa bậc 2 (Quadratic) để âm lượng tự nhiên hơn
-    // Mức thấp sẽ to hơn mức bậc 3 cũ, nhưng vẫn mượt hơn mức tuyến tính.
-    audio.volume = Math.pow(volume, 2);
+    // Sử dụng đường cong giúp âm lượng ở mức thấp (1-10%) to hơn một chút để dễ nghe
+    // Công thức: (volume^1.5) là sự cân bằng giữa linear và quadratic
+    audio.volume = Math.pow(volume, 1.5);
     const volumePercent = volume * 100;
     
-    // Lưu âm lượng vào localStorage
-    localStorage.setItem('music_volume', volume);
+    // Lưu âm lượng vào localStorage với tên mới để tránh trùng lặp
+    console.log("Đang lưu âm lượng:", volume);
+    localStorage.setItem('music_player_volume', volume);
 
 
     const volumeIcon = document.querySelector('.music-control__right i');

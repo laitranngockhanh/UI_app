@@ -910,7 +910,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         await loadAlbums();
         updateSongList();
         displayAlbumsList();
-        const savedVolume = localStorage.getItem('music_volume');
+        const savedVolume = localStorage.getItem('music_player_volume');
         updateVolume(savedVolume !== null ? parseFloat(savedVolume) : 0.8);
         updateInterfaceBasedOnState();
 
