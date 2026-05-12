@@ -898,6 +898,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         updateSongList();
         displayAlbumsList();
         
+        // Đồng bộ giao diện âm lượng theo HTML
+        if (volumeSlider) {
+            updateVolume(parseFloat(volumeSlider.value) / 100);
+        } else if (slider) {
+            updateVolume(parseFloat(slider.value));
+        }
+
         updateInterfaceBasedOnState();
         if ('mediaSession' in navigator) {
             navigator.mediaSession.playbackState = 'paused';

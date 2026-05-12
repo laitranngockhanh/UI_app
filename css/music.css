@@ -11,6 +11,11 @@ body {
     -webkit-user-select: none;
 }
 
+:root {
+    --progress-value: 0%;
+    --volume-value: 100%;
+}
+
 .player {
     background-color: tomato;
     width: 330px;
