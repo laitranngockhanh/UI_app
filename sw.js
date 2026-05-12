@@ -1,4 +1,4 @@
-const CACHE_NAME = 'music-app-cache-v4';
+const CACHE_NAME = 'music-app-cache-v10';
 const STATIC_ASSETS = [
   '/html/index.html',
   '/html/contact.html',
@@ -79,9 +79,9 @@ self.addEventListener('fetch', event => {
   if (url.pathname.startsWith('/api')) {
     event.respondWith(
       fetch(event.request).catch(() => {
-        return new Response(JSON.stringify({ error: 'Offline: API unavailable' }), { 
-            status: 503, 
-            headers: { 'Content-Type': 'application/json' } 
+        return new Response(JSON.stringify({ error: 'Offline: API unavailable' }), {
+          status: 503,
+          headers: { 'Content-Type': 'application/json' }
         });
       })
     );
@@ -152,7 +152,7 @@ self.addEventListener('message', event => {
               currentIndex: event.data.payload.currentIndex,
               isLoopSingle: event.data.payload.isLoopSingle,
               isRandom: event.data.payload.isRandom,
-              playedIndices: event.data.payload.playedIndices || [] 
+              playedIndices: event.data.payload.playedIndices || []
             }
           });
         });

@@ -394,10 +394,10 @@ function resetAudioState() {
 function updateVolume(volume) {
     if (isNaN(volume) || volume < 0 || volume > 1) return;
 
-    
+
     audio.volume = volume;
     const volumePercent = volume * 100;
-    
+
     // Lưu âm lượng vào bộ nhớ trình duyệt
     localStorage.setItem('music_player_volume', volume.toString());
 

@@ -222,7 +222,7 @@ function updateSongItemEvents() {
                                 } else {
                                     songs = songs.filter(s => s.song_id !== song.song_id);
                                     await deleteFromIndexedDB('songs', song.song_id);
-                                    const affectedAlbums = albums.filter(album => 
+                                    const affectedAlbums = albums.filter(album =>
                                         album.songs.some(s => s.song_id === song.song_id)
                                     );
                                     affectedAlbums.forEach(album => {
@@ -337,7 +337,7 @@ function updateSongItemEvents() {
 
 function updateAlbumItemEvents() {
     const albumItems = document.querySelectorAll('.album-item');
-    
+
     albumItems.forEach(item => {
         const optionsBtn = item.querySelector('.album-options-btn');
         const optionsPopup = item.querySelector('.options-popup');
@@ -442,7 +442,7 @@ function updateAlbumItemEvents() {
                 if (playlistTitle) playlistTitle.textContent = 'Đang tải...';
                 const songListEl = document.querySelector('.song-list');
                 if (songListEl) songListEl.innerHTML = '<p class="no-songs-message" style="display:block; color:#fff;">Đang đồng bộ dữ liệu...</p>';
-                
+
                 await loadAlbumSongs(albumId);
                 if (currentAlbumPlaylist.length > 0) await appendSong(0, true);
             } else if (e.target !== optionsBtn && !e.target.closest('.options-popup') && !e.target.closest('.remove-song-btn')) {
@@ -450,7 +450,7 @@ function updateAlbumItemEvents() {
                 if (playlistTitle) playlistTitle.textContent = 'Đang tải...';
                 const songListEl = document.querySelector('.song-list');
                 if (songListEl) songListEl.innerHTML = '<p class="no-songs-message" style="display:block; color:#fff;">Đang đồng bộ dữ liệu...</p>';
-                
+
                 await loadAlbumSongs(albumId);
             }
         });
@@ -897,7 +897,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         await loadAlbums();
         updateSongList();
         displayAlbumsList();
-        
+
         // Khôi phục âm lượng đã lưu hoặc mặc định là 100%
         const savedVolume = localStorage.getItem('music_player_volume');
         const initialVolume = savedVolume !== null ? parseFloat(savedVolume) : 1.0;
@@ -973,7 +973,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (event.key === 'auth_token') await checkLoginStatus();
         });
 
-        
+
         const originalFetchAPI = fetchAPI;
         window.fetchAPI = async (endpoint, method = 'GET', body = null) => {
             try {
@@ -1015,7 +1015,7 @@ document.addEventListener('visibilitychange', () => {
         }
     } else {
         if (isPlaying && audio.src && audio.src !== window.location.href) {
-            audio.play().catch(() => {});
+            audio.play().catch(() => { });
         } else {
             audio.pause();
         }
@@ -1026,7 +1026,7 @@ document.addEventListener('visibilitychange', () => {
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.addEventListener('message', (event) => {
         if (event.data.type === 'PLAYBACK_RESPONSE') {
-            togglePlayPause(event.data.payload.shouldPlay).catch(() => {});
+            togglePlayPause(event.data.payload.shouldPlay).catch(() => { });
         } else if (event.data.type === 'NAVIGATE') {
             window.location.href = event.data.payload;
         }
