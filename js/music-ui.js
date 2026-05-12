@@ -898,12 +898,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         updateSongList();
         displayAlbumsList();
         
-        // Đồng bộ giao diện âm lượng theo HTML
-        if (volumeSlider) {
-            updateVolume(parseFloat(volumeSlider.value) / 100);
-        } else if (slider) {
-            updateVolume(parseFloat(slider.value));
-        }
+        // Khôi phục âm lượng đã lưu hoặc mặc định là 100%
+        const savedVolume = localStorage.getItem('music_player_volume');
+        const initialVolume = savedVolume !== null ? parseFloat(savedVolume) : 1.0;
+        updateVolume(initialVolume);
 
         updateInterfaceBasedOnState();
         if ('mediaSession' in navigator) {

@@ -397,6 +397,9 @@ function updateVolume(volume) {
     
     audio.volume = volume;
     const volumePercent = volume * 100;
+    
+    // Lưu âm lượng vào bộ nhớ trình duyệt
+    localStorage.setItem('music_player_volume', volume.toString());
 
 
     const volumeIcon = document.querySelector('.music-control__right i');
