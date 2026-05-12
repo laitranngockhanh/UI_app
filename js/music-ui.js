@@ -1,15 +1,10 @@
-// ============================================================
-// music-ui.js - Hiển thị danh sách bài hát, album và quản lý popup
-// ============================================================
-
-// Các phần tử DOM (sẽ được khởi tạo trong DOMContentLoaded)
 let audio, playBtn, playIcon, pauseIcon, progress, timeStart, timeDuration;
 let volumeSlider, slider, btn, record, toneArm, playlistToggle, albumsToggle;
 let playlist, songList, songTitle, songArtist, toggleAddSongBtn, addSongPopup;
 let closeAddSongBtn, overlay, addSongSubmit, prevBtn, nextBtn, randomBtn;
 let loopBtn, playlistTitle;
 
-// Biến trạng thái UI
+
 let activePopup = null;
 let currentPopup = null;
 let activePopups = [];
@@ -25,8 +20,6 @@ function updateSongList() {
     const disableActions = (!isOnline || !isLoggedIn);
     const songListSource = currentAlbumId ? currentAlbumPlaylist : songs;
     const noSongsMessage = songList.querySelector('.no-songs-message');
-
-    // Sử dụng playingSongId đã được lưu lại khi phát bài hát
     const currentSongId = playingSongId;
 
     songList.querySelectorAll('.song-item').forEach(item => item.remove());
@@ -68,7 +61,6 @@ function updateSongList() {
     }
     updateSongItemEvents();
 
-    // Tự động cuộn đến bài hát đang phát
     const activeItem = songList.querySelector('.song-item.playing');
     if (activeItem) {
         activeItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -98,7 +90,6 @@ function displayAlbumsList() {
         const albumTemplate = document.getElementById('album-item-template').content;
         const songTemplate = document.getElementById('album-song-item-template').content;
 
-        // Sử dụng playingSongId đã được lưu lại khi phát bài hát
         const currentSongId = playingSongId;
 
         albums.forEach(album => {
@@ -135,7 +126,6 @@ function displayAlbumsList() {
 
                     albumSongs.appendChild(songClone);
 
-                    // Thêm class 'playing' nếu bài hát này đang được nạp trong player
                     const songItem = albumSongs.lastElementChild;
                     if (currentSongId && String(song.song_id) === String(currentSongId)) {
                         songItem.classList.add('playing');
@@ -151,7 +141,6 @@ function displayAlbumsList() {
     }
     updateAlbumItemEvents();
 
-    // Tự động cuộn đến bài hát đang phát trong Album
     const activeAlbumItem = albumList.querySelector('.album-song-item.playing');
     if (activeAlbumItem) {
         activeAlbumItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -503,9 +492,6 @@ function updateAlbumItemEvents() {
                             showNotification('Đã xóa bài hát khỏi album.', 'success');
                         } catch (error) {
                             showNotification(error.message, 'error');
-                            await loadAlbums();
-                            displayAlbumsList();
-                            if (currentAlbumId === parseInt(albumId)) await loadAlbumSongs(albumId);
                         }
                     }
                 });
@@ -515,27 +501,21 @@ function updateAlbumItemEvents() {
 }
 
 function setupEvents() {
-    // ƯU TIÊN 1: Nạp âm lượng trước để đảm bảo luôn hoạt động
     try {
         if (slider) {
-            console.log("Đã tìm thấy thanh trượt .slider, đang gán sự kiện...");
             slider.addEventListener('input', (e) => {
                 const volume = parseFloat(e.target.value);
-                console.log("Thanh trượt .slider thay đổi:", volume);
                 updateVolume(volume);
             });
         }
-
         if (volumeSlider) {
-            console.log("Đã tìm thấy thanh trượt #progress1, đang gán sự kiện...");
             volumeSlider.addEventListener('input', (e) => {
                 const volume = parseFloat(e.target.value) / 100;
-                console.log("Thanh trượt #progress1 thay đổi:", volume);
                 updateVolume(volume);
             });
         }
     } catch (err) {
-        console.error("Lỗi khi nạp sự kiện âm lượng:", err);
+        console.error("Lỗi nạp sự kiện âm lượng:", err);
     }
 
     const debouncedToggle = debounce(() => togglePlayPause(!isPlaying), 200);
@@ -647,8 +627,6 @@ function setupEvents() {
     if (nextBtn) nextBtn.addEventListener('click', debouncedNext);
 
     audio.addEventListener('error', () => resetAudioState());
-
-    const debouncedToggle = debounce(() => togglePlayPause(!isPlaying), 200);
 
     if (randomBtn) {
         randomBtn.addEventListener('click', () => {
@@ -884,7 +862,6 @@ function setupEvents() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // Khởi tạo các phần tử DOM
     audio = document.getElementById('audio');
     playBtn = document.querySelector('.music-control__icon-play');
     playIcon = playBtn?.querySelector('.fa-play');
@@ -913,20 +890,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     randomBtn = document.querySelector('.fa-random');
     loopBtn = document.querySelector('.fa-redo');
     playlistTitle = document.querySelector('.playlist-header');
-
-    // KHỞI TẠO SỰ KIỆN NGAY LẬP TỨC
     setupEvents();
-
     try {
         await initIndexedDB();
         await loadSongs();
         await loadAlbums();
         updateSongList();
         displayAlbumsList();
-        const savedVolume = localStorage.getItem('music_player_volume');
-        updateVolume(savedVolume !== null ? parseFloat(savedVolume) : 0.8);
+        updateVolume(1.0);
         updateInterfaceBasedOnState();
-
         if ('mediaSession' in navigator) {
             navigator.mediaSession.playbackState = 'paused';
             const artwork = navigator.onLine ? [
@@ -1128,12 +1100,10 @@ function showAlbumInputPopup(title, defaultValue, onSave) {
 
         try {
             await onSave(newTitle);
-            // Thành công mới đóng popup
             popup.remove();
             if (overlay) overlay.classList.remove('active');
             activeAlbumInputPopup = null;
         } catch (error) {
-            // Lỗi thì giữ popup để người dùng sửa, nhưng mở lại button
             showNotification(error.message, 'error');
             saveBtn.disabled = false;
             saveBtn.style.opacity = '1';

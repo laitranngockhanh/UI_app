@@ -14,13 +14,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             })
             .catch(error => {
-                // Hiển thị thông báo cho người dùng nếu cần
                 document.dispatchEvent(new CustomEvent('showNotification', {
                     detail: { message: 'Không thể đăng ký Service Worker: ' + error.message, type: 'error' }
                 }));
             });
-
-        // Xử lý lỗi không tìm thấy controller
         navigator.serviceWorker.addEventListener('controllerchange', () => {
         });
     } 

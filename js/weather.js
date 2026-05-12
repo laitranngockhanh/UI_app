@@ -125,10 +125,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     count: 1
                 };
             } else {
-                // Cập n
                 forecastByDay[dayKey].pop = Math.max(forecastByDay[dayKey].pop, item.pop);
                 forecastByDay[dayKey].count += 1;
-                // Ưu tiên dữ liệu lúc 12h trưa
                 if (itemDate.getHours() === 12) {
                     forecastByDay[dayKey].icon = item.weather[0].icon;
                     forecastByDay[dayKey].description = item.weather[0].description;
@@ -136,7 +134,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        // Chuyển dữ liệu thành mảng và sắp xếp theo ngày
         Object.values(forecastByDay).sort((a, b) => a.date - b.date).forEach(day => {
             dailyForecasts.push(day);
         });
@@ -147,7 +144,6 @@ document.addEventListener('DOMContentLoaded', function () {
             if (window.showNotification) showNotification(`Chỉ có dữ liệu cho ${fiveDayForecast.length} ngày!`, 'info');
         }
 
-        // Cập nhật giao diện cho các ngày có dữ liệu
         fiveDayForecast.forEach((day, index) => {
             const forecastDay = document.querySelector(`.forecast-day[data-day="${index + 1}"]`);
             if (forecastDay) {
@@ -164,7 +160,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        // Xử lý các ô dự báo không có dữ liệu
         for (let i = fiveDayForecast.length + 1; i <= 5; i++) {
             const forecastDay = document.querySelector(`.forecast-day[data-day="${i}"]`);
             if (forecastDay) {

@@ -5,9 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => window.location.href = 'login.html', 1500);
         return;
     }
-
-    // Sử dụng fetchAPI global từ api.js
-
     const tabButtons = document.querySelectorAll('.tab-button');
     const tabContents = document.querySelectorAll('.tab-content');
     if (tabButtons.length && tabContents.length) {

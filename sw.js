@@ -49,11 +49,9 @@ const STATIC_ASSETS = [
   '/manifest.json',
 ];
 
-// Cài đặt Service Worker
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
-      // Dùng return cache.addAll() để đợi cache xong
       return cache.addAll(STATIC_ASSETS);
     }).catch(err => {
       console.error('Service Worker cache.addAll failed:', err);
@@ -62,7 +60,6 @@ self.addEventListener('install', event => {
   self.skipWaiting();
 });
 
-// Kích hoạt Service Worker
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(cacheNames => {
@@ -76,11 +73,9 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-// Xử lý yêu cầu mạng
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
-  // Skip API calls from standard caching - handle them separately
   if (url.pathname.startsWith('/api')) {
     event.respondWith(
       fetch(event.request).catch(() => {
@@ -96,7 +91,6 @@ self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request).then(response => {
       return response || fetch(event.request).then(fetchResponse => {
-        // Cache new requests that were not in STATIC_ASSETS
         if (!fetchResponse || fetchResponse.status !== 200 || fetchResponse.type !== 'basic') {
           return fetchResponse;
         }
@@ -106,7 +100,6 @@ self.addEventListener('fetch', event => {
         });
         return fetchResponse;
       }).catch(() => {
-        // Fallback to index if navigating to an HTML page
         if (event.request.mode === 'navigate') {
           return caches.match('/html/index.html');
         }
@@ -116,7 +109,6 @@ self.addEventListener('fetch', event => {
   );
 });
 
-// Xử lý tin nhắn
 self.addEventListener('message', event => {
 
   if (event.data && event.data.type === 'UPDATE_MEDIA_METADATA') {
@@ -160,7 +152,7 @@ self.addEventListener('message', event => {
               currentIndex: event.data.payload.currentIndex,
               isLoopSingle: event.data.payload.isLoopSingle,
               isRandom: event.data.payload.isRandom,
-              playedIndices: event.data.payload.playedIndices || [] // Thêm playedIndices
+              playedIndices: event.data.payload.playedIndices || [] 
             }
           });
         });
@@ -169,7 +161,6 @@ self.addEventListener('message', event => {
   }
 });
 
-// Xử lý thông báo đẩy
 self.addEventListener('push', event => {
   const data = event.data ? event.data.json() : {};
   const options = {
@@ -184,7 +175,6 @@ self.addEventListener('push', event => {
   );
 });
 
-// Xử lý nhấp vào thông báo
 self.addEventListener('notificationclick', event => {
   event.notification.close();
   event.waitUntil(

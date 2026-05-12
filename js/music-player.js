@@ -1,8 +1,3 @@
-// ============================================================
-// music-player.js - Logic điều khiển phát nhạc
-// ============================================================
-
-// Biến trạng thái phát nhạc
 let isPlaying = false;
 let isProcessing = false;
 let isLoadingSong = false;
@@ -96,7 +91,6 @@ function getPrevSongIndex(currentIndex) {
                 return prevIndex;
             }
         }
-        // Không có lịch sử → giữ nguyên bài hiện tại
         return currentIndex;
     }
 
@@ -264,8 +258,6 @@ async function appendSong(index, autoPlay = false) {
         if (timeStart) timeStart.textContent = '0:00';
         if (timeDuration) timeDuration.textContent = '0:00';
 
-        // Đã xóa dòng tự động set volume về 0.8 để tránh làm phiền người dùng khi họ muốn để mức nhỏ hoặc tắt tiếng.
-
         if (preloadAudio && nextSongIndex === index) {
             if (!preloadAudio.src) {
                 throw new Error('Nguồn âm thanh preload không hợp lệ.');
@@ -403,13 +395,8 @@ function updateVolume(volume) {
     if (isNaN(volume) || volume < 0 || volume > 1) return;
 
     
-    // Sử dụng đường cong tuyến tính để đảm bảo mức âm lượng thấp (1%) vẫn đủ nghe thấy
     audio.volume = volume;
     const volumePercent = volume * 100;
-    
-    // Lưu âm lượng vào localStorage với tên mới để tránh trùng lặp
-    console.log("Đang lưu âm lượng:", volume);
-    localStorage.setItem('music_player_volume', volume);
 
 
     const volumeIcon = document.querySelector('.music-control__right i');

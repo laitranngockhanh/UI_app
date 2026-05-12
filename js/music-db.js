@@ -1,7 +1,3 @@
-// ============================================================
-// music-db.js - Toàn bộ logic IndexedDB cho Music App
-// ============================================================
-
 const DB_NAME = 'MusicAppDB';
 const DB_VERSION = 1;
 let db;
@@ -147,7 +143,6 @@ async function clearAllIndexedDB() {
     displayAlbumsList();
 }
 
-// Hàm kiểm tra và làm mới dữ liệu trong IndexedDB nếu cần
 async function refreshIndexedDBIfNeeded() {
     const isOnline = navigator.onLine;
     const isLoggedIn = !!localStorage.getItem('auth_token');

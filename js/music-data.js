@@ -1,8 +1,3 @@
-// ============================================================
-// music-data.js - Tải dữ liệu bài hát và album từ API / IndexedDB
-// ============================================================
-
-// Hàm tải bài hát
 async function loadSongs() {
     try {
         if (!db) await initIndexedDB();

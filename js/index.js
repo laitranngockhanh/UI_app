@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
    
 
-    // Vô hiệu hóa liên kết "Weather" và "User" khi offline
+
     links.forEach(({ container, href }) => {
         const link = container.querySelector('a');
         if (link && isOffline && (href === 'weather.html' || href === 'user.html')) {
@@ -45,7 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Lắng nghe sự kiện thay đổi trạng thái mạng
     window.addEventListener('online', () => {
         links.forEach(({ container, href }) => {
             const link = container.querySelector('a');

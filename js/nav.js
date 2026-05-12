@@ -10,29 +10,27 @@ function showNotification(message, type = 'success') {
         const notificationObj = {
             message,
             type,
-            element: null, // Lưu trữ DOM element của thông báo
+            element: null,
             remove: function () {
                 if (this.element) {
-                    this.element.remove(); // Loại bỏ phần tử DOM
-                    this.element = null; // Đặt lại để tránh lỗi
+                    this.element.remove();
+                    this.element = null;
                     const index = notificationQueue.findIndex(n => n === this);
                     if (index !== -1) {
                         notificationQueue.splice(index, 1);
                     }
-                    // Kiểm tra và hiển thị thông báo tiếp theo một cách nhất quán
                     if (notificationQueue.length > 0) {
-                        showNextNotification(); // Gọi *trong* hàm remove
+                        showNextNotification(); 
                     } else {
-                        isShowingNotification = false; // Cập nhật trạng thái khi hết thông báo
+                        isShowingNotification = false; 
                     }
                 }
             }
         };
 
         notificationQueue.push(notificationObj);
-        // Kiểm tra và hiển thị thông báo tiếp theo một cách nhất quán
         if (!isShowingNotification) {
-            showNextNotification(); // Gọi *trong* hàm showNotification
+            showNextNotification(); 
         }
         return notificationObj;
     } else {
@@ -47,7 +45,7 @@ function showNextNotification() {
     }
 
     isShowingNotification = true;
-    const notificationObj = notificationQueue.shift(); // Lấy và xóa *phần tử đầu tiên*
+    const notificationObj = notificationQueue.shift(); 
     const { message, type } = notificationObj;
 
     const notification = document.createElement('div');
@@ -60,26 +58,17 @@ function showNextNotification() {
     notification.style.backgroundColor =
         type === 'success' ? '#28a745' :
         type === 'error' ? '#dc3545' :
-        type === 'info' ? '#17a2b8' : '#28a745'; // Đã sửa màu info
+        type === 'info' ? '#17a2b8' : '#28a745'; 
     notification.style.color = '#fff';
     notification.style.borderRadius = '5px';
     notification.style.zIndex = '1000';
     document.body.appendChild(notification);
 
-    notificationObj.element = notification; // Gán phần tử DOM vào đối tượng
-
+    notificationObj.element = notification; 
     setTimeout(() => {
         notificationObj.remove();
     }, 2500);
 }
-
-
-
-
-
-
-
-// Hàm hiển thị xác nhận
 function showCustomConfirm(message, callback) {
     const confirmBox = document.createElement('div');
     confirmBox.className = 'custom-confirm-box';
@@ -110,7 +99,6 @@ function showCustomConfirm(message, callback) {
     overlay.onclick = () => { callback(false); confirmBox.remove(); overlay.remove(); };
 }
 
-// Hàm tạo sidebar
 function renderSidebar() {
     const placeholder = document.getElementById('sidebar-placeholder');
     if (!placeholder) {
@@ -153,7 +141,6 @@ function renderSidebar() {
 
     placeholder.innerHTML = sidebarHTML;
 
-    // Thêm sự kiện cho nút menu
     const btnMenu = document.querySelector('.btn-menu');
     const sidebar = document.querySelector('.sidebar');
     if (btnMenu && sidebar) {
@@ -171,7 +158,6 @@ function renderSidebar() {
         };
     }
 
-    // Cập nhật trạng thái active của liên kết
     const links = document.querySelectorAll('.nav-links a[data-page]');
     links.forEach(link => {
         if (link.getAttribute('data-page') === currentPage) {
@@ -182,7 +168,6 @@ function renderSidebar() {
     });
 }
 
-// Hàm xử lý sự kiện nhấp vào liên kết
 function setupLinkEvents() {
     const links = document.querySelectorAll('.nav-links a[data-page]');
     if (links.length === 0) {
@@ -192,14 +177,11 @@ function setupLinkEvents() {
     links.forEach(link => {
         const page = link.getAttribute('data-page');
 
-        // Loại bỏ event listener cũ để tránh trùng lặp
         link.onclick = null;
 
         link.addEventListener('click', (e) => {
             const isOffline = !navigator.onLine;
             const token = localStorage.getItem('auth_token');
-
-            // Nếu liên kết đã bị vô hiệu hóa, ngăn hành động mặc định và hiển thị thông báo
             if (link.classList.contains('disabled')) {
                 e.preventDefault();
                 if (page === 'user') {
@@ -211,8 +193,6 @@ function setupLinkEvents() {
                 }
                 return;
             }
-
-            // Xử lý các liên kết không bị vô hiệu hóa
             if (page === 'user') {
                 if (!token) {
                     e.preventDefault();
@@ -242,7 +222,7 @@ function setupLinkEvents() {
     });
 }
 
-// Kiểm tra trạng thái mạng định kỳ
+
 setInterval(() => {
     const sidebar = document.querySelector('.sidebar');
     if (sidebar) {
@@ -254,15 +234,13 @@ setInterval(() => {
             setupLinkEvents();
         }
     }
-}, 1000); // Kiểm tra mỗi 1 giây
+}, 1000); 
 
-// Khởi tạo khi tải trang
 document.addEventListener('DOMContentLoaded', () => {
     renderSidebar();
     setupLinkEvents();
 });
 
-// Lắng nghe sự kiện chuyển trang (nếu dùng pagetrans.js)
 window.addEventListener('pageChange', () => {
     renderSidebar();
     setupLinkEvents();

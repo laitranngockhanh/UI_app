@@ -14,7 +14,6 @@ function protectPage() {
     const isOffline = !navigator.onLine;
     const currentPage = (window.location.pathname.split('/').pop() || 'index.html').replace('.html', '');
 
-    // Kiểm tra trạng thái offline khi tải trang
     if (isOffline) {
         if (currentPage === 'user' || currentPage === 'weather') {
             if (window.showNotification) {
@@ -25,14 +24,12 @@ function protectPage() {
         }
     }
 
-    // Kiểm tra đăng nhập cho user.html
     if (currentPage === 'user') {
         if (!checkAuth()) {
             return false;
         }
     }
 
-    // Xử lý khi trang được load lại từ bộ nhớ cache hoặc điều hướng back/forward
     window.onpageshow = function(event) {
         if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
             if (isOffline && (currentPage === 'user' || currentPage === 'weather')) {
@@ -48,7 +45,6 @@ function protectPage() {
         }
     };
 
-    // Lắng nghe sự kiện thay đổi trạng thái mạng
     window.addEventListener('offline', () => {
         const updatedPage = (window.location.pathname.split('/').pop() || 'index.html').replace('.html', '');
         if (updatedPage === 'user' || updatedPage === 'weather') {

@@ -1,7 +1,3 @@
-// ============================================================
-// api.js - Hàm gọi API dùng chung cho toàn bộ ứng dụng
-// ============================================================
-
 const API_BASE_URL = 'https://apimusicweather.onrender.com/api';
 
 async function fetchAPI(endpoint, method = 'GET', body = null) {
