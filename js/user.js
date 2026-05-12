@@ -6,54 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    async function fetchAPI(endpoint, method = 'GET', body = null) {
-
-        if (!navigator.onLine) {
-            throw new Error('Cannot fetch data while offline.');
-        }
-        const token = localStorage.getItem('auth_token');
-        
-        
-        if (!token) {
-            throw new Error('No authentication token found. Please log in.');
-        }
-    
-        const headers = { 
-            'Authorization': `Bearer ${token}`,
-            'Accept': 'application/json' 
-        };
-        const config = { method, headers };
-        if (body && method !== 'GET') {
-            if (body instanceof FormData) {
-                config.body = body;
-            } else {
-                headers['Content-Type'] = 'application/json';
-                config.body = JSON.stringify(body);
-            }
-        }
-    
-        // Định nghĩa API_BASE_URL từ state.js
-        const API_BASE_URL = 'https://apimusicweather.onrender.com/api';
-    
-        try {
-            const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                if (response.status === 401) {
-                    localStorage.removeItem('auth_token');
-                    showNotification('Session expired. Please log in again.', 'error');
-                    setTimeout(() => {
-                        window.location.href = 'login.html';
-                    }, 1500);
-                    throw new Error('Unauthorized access. Redirecting to login...');
-                }
-                throw new Error(errorData.message || `Server error: ${response.status}`);
-            }
-            return response.json();
-        } catch (error) {
-            throw new Error(error.message);
-        }
-    }
+    // Sử dụng fetchAPI global từ api.js
 
     const tabButtons = document.querySelectorAll('.tab-button');
     const tabContents = document.querySelectorAll('.tab-content');

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'music-app-cache-v1';
+const CACHE_NAME = 'music-app-cache-v3';
 const STATIC_ASSETS = [
   '/html/index.html',
   '/html/contact.html',
@@ -31,7 +31,11 @@ const STATIC_ASSETS = [
   '/js/logout.js',
   '/js/weather.js',
   '/js/user.js',
-  '/js/music-app.js',
+  '/js/api.js',
+  '/js/music-db.js',
+  '/js/music-data.js',
+  '/js/music-player.js',
+  '/js/music-ui.js',
   '/image/192x192.png',
   '/image/512x512.png',
   '/image/contact.png',
