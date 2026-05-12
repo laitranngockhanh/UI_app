@@ -910,7 +910,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         await loadAlbums();
         updateSongList();
         displayAlbumsList();
-        updateVolume(0.8);
+        const savedVolume = localStorage.getItem('music_volume');
+        updateVolume(savedVolume !== null ? parseFloat(savedVolume) : 0.8);
         updateInterfaceBasedOnState();
 
         if ('mediaSession' in navigator) {
@@ -982,7 +983,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (event.key === 'auth_token') await checkLoginStatus();
         });
 
-        // Ghi đè fetchAPI để kiểm tra token hết hạn
+        
         const originalFetchAPI = fetchAPI;
         window.fetchAPI = async (endpoint, method = 'GET', body = null) => {
             try {

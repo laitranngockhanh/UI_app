@@ -402,11 +402,14 @@ function resetAudioState() {
 function updateVolume(volume) {
     if (isNaN(volume) || volume < 0 || volume > 1) return;
 
-    // Sử dụng đường cong mũ 3 để âm lượng giống YouTube và các trình phát chuyên nghiệp nhất
-    audio.volume = Math.pow(volume, 3);
+    
+    audio.volume = volume;
     const volumePercent = volume * 100;
+    
+    // Lưu âm lượng vào localStorage
+    localStorage.setItem('music_volume', volume);
 
-    // Cập nhật icon loa theo mức âm lượng
+
     const volumeIcon = document.querySelector('.music-control__right i');
     if (volumeIcon) {
         volumeIcon.className = 'fa-solid';
