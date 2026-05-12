@@ -264,7 +264,7 @@ async function appendSong(index, autoPlay = false) {
         if (timeStart) timeStart.textContent = '0:00';
         if (timeDuration) timeDuration.textContent = '0:00';
 
-        if (audio.volume === 0) updateVolume(0.8);
+        // Đã xóa dòng tự động set volume về 0.8 để tránh làm phiền người dùng khi họ muốn để mức nhỏ hoặc tắt tiếng.
 
         if (preloadAudio && nextSongIndex === index) {
             if (!preloadAudio.src) {
@@ -403,7 +403,9 @@ function updateVolume(volume) {
     if (isNaN(volume) || volume < 0 || volume > 1) return;
 
     
-    audio.volume = volume;
+    // Sử dụng đường cong lũy thừa bậc 2 (Quadratic) để âm lượng tự nhiên hơn
+    // Mức thấp sẽ to hơn mức bậc 3 cũ, nhưng vẫn mượt hơn mức tuyến tính.
+    audio.volume = Math.pow(volume, 2);
     const volumePercent = volume * 100;
     
     // Lưu âm lượng vào localStorage
