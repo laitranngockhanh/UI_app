@@ -515,6 +515,29 @@ function updateAlbumItemEvents() {
 }
 
 function setupEvents() {
+    // ƯU TIÊN 1: Nạp âm lượng trước để đảm bảo luôn hoạt động
+    try {
+        if (slider) {
+            console.log("Đã tìm thấy thanh trượt .slider, đang gán sự kiện...");
+            slider.addEventListener('input', (e) => {
+                const volume = parseFloat(e.target.value);
+                console.log("Thanh trượt .slider thay đổi:", volume);
+                updateVolume(volume);
+            });
+        }
+
+        if (volumeSlider) {
+            console.log("Đã tìm thấy thanh trượt #progress1, đang gán sự kiện...");
+            volumeSlider.addEventListener('input', (e) => {
+                const volume = parseFloat(e.target.value) / 100;
+                console.log("Thanh trượt #progress1 thay đổi:", volume);
+                updateVolume(volume);
+            });
+        }
+    } catch (err) {
+        console.error("Lỗi khi nạp sự kiện âm lượng:", err);
+    }
+
     const debouncedToggle = debounce(() => togglePlayPause(!isPlaying), 200);
     if (playBtn) playBtn.addEventListener('click', debouncedToggle);
     if (btn) btn.addEventListener('click', debouncedToggle);
@@ -623,21 +646,9 @@ function setupEvents() {
 
     if (nextBtn) nextBtn.addEventListener('click', debouncedNext);
 
-    if (slider) {
-        slider.addEventListener('input', (e) => {
-            const volume = parseFloat(e.target.value);
-            updateVolume(volume);
-        });
-    }
-
-    if (volumeSlider) {
-        volumeSlider.addEventListener('input', (e) => {
-            const volume = parseFloat(e.target.value) / 100;
-            updateVolume(volume);
-        });
-    }
-
     audio.addEventListener('error', () => resetAudioState());
+
+    const debouncedToggle = debounce(() => togglePlayPause(!isPlaying), 200);
 
     if (randomBtn) {
         randomBtn.addEventListener('click', () => {
@@ -903,9 +914,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     loopBtn = document.querySelector('.fa-redo');
     playlistTitle = document.querySelector('.playlist-header');
 
+    // KHỞI TẠO SỰ KIỆN NGAY LẬP TỨC
+    setupEvents();
+
     try {
         await initIndexedDB();
-        setupEvents();
         await loadSongs();
         await loadAlbums();
         updateSongList();

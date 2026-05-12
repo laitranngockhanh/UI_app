@@ -403,9 +403,8 @@ function updateVolume(volume) {
     if (isNaN(volume) || volume < 0 || volume > 1) return;
 
     
-    // Sử dụng đường cong giúp âm lượng ở mức thấp (1-10%) to hơn một chút để dễ nghe
-    // Công thức: (volume^1.5) là sự cân bằng giữa linear và quadratic
-    audio.volume = Math.pow(volume, 1.5);
+    // Sử dụng đường cong tuyến tính để đảm bảo mức âm lượng thấp (1%) vẫn đủ nghe thấy
+    audio.volume = volume;
     const volumePercent = volume * 100;
     
     // Lưu âm lượng vào localStorage với tên mới để tránh trùng lặp
