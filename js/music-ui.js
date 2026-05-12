@@ -898,10 +898,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         updateSongList();
         displayAlbumsList();
         
-
-        audio.volume = 1.0;
-        updateVolume(1.0);
-        
         updateInterfaceBasedOnState();
         if ('mediaSession' in navigator) {
             navigator.mediaSession.playbackState = 'paused';
