@@ -871,6 +871,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     timeDuration = document.querySelector('.music-control__progress-time-duration');
     volumeSlider = document.getElementById('progress1');
     slider = document.querySelector('.slider');
+    
+    // Khôi phục âm lượng ngay lập tức để tránh trễ giao diện
+    const savedVolume = localStorage.getItem('music_player_volume');
+    const initialVolume = savedVolume !== null ? parseFloat(savedVolume) : 1.0;
+    updateVolume(initialVolume);
+
     btn = document.querySelector('.btn');
     record = document.querySelector('.record');
     toneArm = document.querySelector('.tone-arm');
@@ -897,11 +903,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         await loadAlbums();
         updateSongList();
         displayAlbumsList();
-
-        // Khôi phục âm lượng đã lưu hoặc mặc định là 100%
-        const savedVolume = localStorage.getItem('music_player_volume');
-        const initialVolume = savedVolume !== null ? parseFloat(savedVolume) : 1.0;
-        updateVolume(initialVolume);
 
         updateInterfaceBasedOnState();
         if ('mediaSession' in navigator) {
